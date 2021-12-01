@@ -5,8 +5,7 @@ ThemeData light = ThemeData(
     brightness: Brightness.light,
     primarySwatch: Colors.indigo,
     accentColor: Colors.pink,
-    scaffoldBackgroundColor: Color(0xfff1f1f1)
-);
+    scaffoldBackgroundColor: Color(0xfff1f1f1));
 
 ThemeData dark = ThemeData(
   brightness: Brightness.dark,
@@ -14,13 +13,15 @@ ThemeData dark = ThemeData(
   accentColor: Colors.pink,
 );
 
-class ThemeNotifier extends ChangeNotifier{
+class ThemeNotifier extends ChangeNotifier {
   final String key = "theme";
   final String keyLanguage = "language";
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late bool _darkTheme;
   late bool _vnLanguage;
+
   bool get darkTheme => _darkTheme;
+
   bool get vnLanguage => _vnLanguage;
 
   ThemeNotifier() {
@@ -29,13 +30,13 @@ class ThemeNotifier extends ChangeNotifier{
     _loadFromPrefs();
   }
 
-  toggleTheme(){
+  toggleTheme() {
     _darkTheme = !_darkTheme;
     _saveToPrefs();
     notifyListeners();
   }
 
-  changeLanguage(){
+  changeLanguage() {
     _vnLanguage = !_vnLanguage;
     _saveToPrefs();
     notifyListeners();
@@ -43,8 +44,7 @@ class ThemeNotifier extends ChangeNotifier{
 
   _initPrefs() async {
     SharedPreferences prefs = await _prefs;
-    if(prefs == null)
-      prefs  = await SharedPreferences.getInstance();
+    if (prefs == null) prefs = await SharedPreferences.getInstance();
   }
 
   _loadFromPrefs() async {

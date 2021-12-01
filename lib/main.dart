@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeNotifier>(
         builder: (context, ThemeNotifier notifier, child) {
           return GetMaterialApp(
-            locale: notifier.vnLanguage == true? const Locale('vi', 'VN') : const Locale('en', 'US'),
+            locale: notifier.vnLanguage == true
+                ? const Locale('vi', 'VN')
+                : const Locale('en', 'US'),
             translations: LocalString(),
             theme: notifier.darkTheme ? ThemeData.dark() : ThemeData.light(),
             home: const SettingsPage(),
@@ -40,6 +42,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 String? _imagePath;
+
 class _SettingsPage extends State<SettingsPage> {
   ThemeNotifier themeNotifier = ThemeNotifier();
   File? _image;
@@ -124,19 +127,15 @@ class _SettingsPage extends State<SettingsPage> {
           ],
         )),
         body: Container(
-            decoration: BoxDecoration(
-                image: _imagePath != null
-                    ? DecorationImage(
-                        image: FileImage(
-                          File(_imagePath!),
-                        ),
-                        fit: BoxFit.fill)
-                    : null),
-            child: _imagePath == null
-                ? Container()
-                : Image(
-                    image: FileImage(File(_imagePath!)),
-                  )));
+          decoration: BoxDecoration(
+              image: _imagePath != null
+                  ? DecorationImage(
+                      image: FileImage(
+                        File(_imagePath!),
+                      ),
+                      fit: BoxFit.fill)
+                  : null),
+        ));
   }
 
   void pickImage() async {
@@ -159,5 +158,4 @@ class _SettingsPage extends State<SettingsPage> {
       _imagePath = prefs.getString("save")!;
     });
   }
-
 }
