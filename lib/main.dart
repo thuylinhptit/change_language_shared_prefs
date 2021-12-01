@@ -8,7 +8,7 @@ import 'package:test_theme/local_string.dart';
 import 'package:test_theme/theme_provider.dart';
 
 void main() async {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -21,11 +21,10 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeNotifier>(
         builder: (context, ThemeNotifier notifier, child) {
           return GetMaterialApp(
-            locale:
-                notifier.vnLanguage ? Locale('vi', 'VN') : Locale('en', 'US'),
+            locale: notifier.vnLanguage == true? const Locale('vi', 'VN') : const Locale('en', 'US'),
             translations: LocalString(),
             theme: notifier.darkTheme ? ThemeData.dark() : ThemeData.light(),
-            home: SettingsPage(),
+            home: const SettingsPage(),
           );
         },
       ),
@@ -41,7 +40,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 String? _imagePath;
-
 class _SettingsPage extends State<SettingsPage> {
   ThemeNotifier themeNotifier = ThemeNotifier();
   File? _image;
@@ -67,7 +65,7 @@ class _SettingsPage extends State<SettingsPage> {
                   style: const TextStyle(fontSize: 18),
                 ),
                 onTap: () {
-                  PickImage();
+                  pickImage();
                 }),
             Consumer<ThemeNotifier>(
               builder: (context, notifier, child) => ListTile(
@@ -103,7 +101,7 @@ class _SettingsPage extends State<SettingsPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: notifier.vnLanguage == true
+                              child: notifier.vnLanguage == false
                                   ? Image.asset(
                                       'assets/flat_vn.png',
                                     )
@@ -141,16 +139,16 @@ class _SettingsPage extends State<SettingsPage> {
                   )));
   }
 
-  void PickImage() async {
+  void pickImage() async {
     var image = await ImagePicker().getImage(source: ImageSource.gallery);
     setState(() {
       _image = File(image!.path);
       _imagePath = _image!.path;
     });
-    SaveImage(_image!.path);
+    saveImage(_image!.path);
   }
 
-  void SaveImage(path) async {
+  void saveImage(path) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("save", path);
   }
@@ -161,4 +159,5 @@ class _SettingsPage extends State<SettingsPage> {
       _imagePath = prefs.getString("save")!;
     });
   }
+
 }
