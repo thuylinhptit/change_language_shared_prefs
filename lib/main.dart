@@ -154,8 +154,10 @@ class _SettingsPage extends State<SettingsPage> {
 
   void loadImage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _imagePath = prefs.getString("save")!;
-    });
+    if( prefs.getString("save") != null ){
+      setState(() {
+        _imagePath = prefs.getString("save")!;
+      });
+    }
   }
 }
