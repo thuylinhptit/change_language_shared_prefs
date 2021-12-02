@@ -8,16 +8,22 @@ import 'package:test_theme/local_string.dart';
 import 'package:test_theme/theme_provider.dart';
 
 void main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  ThemeNotifier themeNotifier = ThemeNotifier();
+  await themeNotifier.loadFromPrefs();
+
+  runApp(MyApp(themeNotifier: themeNotifier));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final ThemeNotifier themeNotifier;
+
+  const MyApp({Key? key, required this.themeNotifier}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
+      create: (_) => themeNotifier,
       child: Consumer<ThemeNotifier>(
         builder: (context, ThemeNotifier notifier, child) {
           return GetMaterialApp(
@@ -61,36 +67,36 @@ class _SettingsPage extends State<SettingsPage> {
         ),
         drawer: Drawer(
             child: ListView(
-          children: [
-            ListTile(
-                title: Text(
-                  'change_bg'.tr,
-                  style: const TextStyle(fontSize: 18),
-                ),
-                onTap: () {
-                  pickImage();
-                }),
-            Consumer<ThemeNotifier>(
-              builder: (context, notifier, child) => ListTile(
-                title: Row(
-                  children: [
-                    Text(
-                      'change_mode'.tr,
+              children: [
+                ListTile(
+                    title: Text(
+                      'change_bg'.tr,
                       style: const TextStyle(fontSize: 18),
                     ),
-                    const Spacer(),
-                    Switch(
-                      onChanged: (value) {
-                        notifier.toggleTheme();
-                      },
-                      value: notifier.darkTheme,
+                    onTap: () {
+                      pickImage();
+                    }),
+                Consumer<ThemeNotifier>(
+                  builder: (context, notifier, child) => ListTile(
+                    title: Row(
+                      children: [
+                        Text(
+                          'change_mode'.tr,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        const Spacer(),
+                        Switch(
+                          onChanged: (value) {
+                            notifier.toggleTheme();
+                          },
+                          value: notifier.darkTheme,
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Consumer<ThemeNotifier>(
-                builder: (context, notifier, child) => ListTile(
+                Consumer<ThemeNotifier>(
+                    builder: (context, notifier, child) => ListTile(
                       title: Row(
                         children: [
                           Text(
@@ -106,11 +112,11 @@ class _SettingsPage extends State<SettingsPage> {
                               ),
                               child: notifier.vnLanguage == false
                                   ? Image.asset(
-                                      'assets/flat_vn.png',
-                                    )
+                                'assets/flat_vn.png',
+                              )
                                   : Image.asset(
-                                      'assets/flat_en.png',
-                                    ),
+                                'assets/flat_en.png',
+                              ),
                             ),
                             onTap: () {
                               notifier.changeLanguage();
@@ -124,16 +130,16 @@ class _SettingsPage extends State<SettingsPage> {
                         ],
                       ),
                     ))
-          ],
-        )),
+              ],
+            )),
         body: Container(
           decoration: BoxDecoration(
               image: _imagePath != null
                   ? DecorationImage(
-                      image: FileImage(
-                        File(_imagePath!),
-                      ),
-                      fit: BoxFit.fill)
+                  image: FileImage(
+                    File(_imagePath!),
+                  ),
+                  fit: BoxFit.fill)
                   : null),
         ));
   }
@@ -154,9 +160,11 @@ class _SettingsPage extends State<SettingsPage> {
 
   void loadImage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if( prefs.getString("save") != null ){
+    var path = prefs.getString("save");
+
+    if (path != null) {
       setState(() {
-        _imagePath = prefs.getString("save")!;
+        _imagePath = path;
       });
     }
   }

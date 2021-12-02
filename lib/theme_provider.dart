@@ -14,9 +14,8 @@ ThemeData dark = ThemeData(
 );
 
 class ThemeNotifier extends ChangeNotifier {
-  final String key = "theme";
+  final String keyTheme = "theme";
   final String keyLanguage = "language";
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late bool _darkTheme;
   late bool _vnLanguage;
 
@@ -27,38 +26,30 @@ class ThemeNotifier extends ChangeNotifier {
   ThemeNotifier() {
     _darkTheme = true;
     _vnLanguage = true;
-    _loadFromPrefs();
   }
 
   toggleTheme() {
     _darkTheme = !_darkTheme;
-    _saveToPrefs();
     notifyListeners();
+    _saveToPrefs();
   }
 
   changeLanguage() {
     _vnLanguage = !_vnLanguage;
-    _saveToPrefs();
     notifyListeners();
+    _saveToPrefs();
   }
 
-  _initPrefs() async {
-    SharedPreferences prefs = await _prefs;
-    if (prefs == null) prefs = await SharedPreferences.getInstance();
-  }
-
-  _loadFromPrefs() async {
-    SharedPreferences prefs = await _prefs;
-    await _initPrefs();
-    _darkTheme = prefs.getBool(key) ?? true;
+  loadFromPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    _darkTheme = prefs.getBool(keyTheme) ?? true;
     _vnLanguage = prefs.getBool(keyLanguage) ?? true;
     notifyListeners();
   }
 
   _saveToPrefs() async {
-    SharedPreferences prefs = await _prefs;
-    await _initPrefs();
-    prefs.setBool(key, _darkTheme);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(keyTheme, _darkTheme);
     prefs.setBool(keyLanguage, _vnLanguage);
   }
 }
